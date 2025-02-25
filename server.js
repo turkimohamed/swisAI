@@ -12,8 +12,8 @@ app.use(express.json());
 const db = mysql.createConnection({
   host: "haumea-shared.dzsecurity.net",
   user: "swisli54_am",
-  password: "YOUR_PASSWORD",
-  database: "DATABASE_NAME",
+  password: "ovUsGt&R(E3W",
+  database: "swisli54_an",
   port: 3360, // تأكد من استخدام المنفذ الصحيح
 });
 
