@@ -8,27 +8,19 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// إعداد اتصال MySQL
+// إنشاء اتصال MySQL باستخدام createPool
 const db = mysql.createPool({
   host: "haumea-shared.dzsecurity.net",
   user: "swisli54_am",
   password: "ovUsGt&R(E3W",
   database: "swisli54_an",
   port: 3360,
-  connectTimeout: 10000, // 10 ثوانٍ
-});
-// تأكد من استخدام المنفذ الصحيح
-
-
-db.connect((err) => {
-  if (err) {
-    console.error("Database connection failed:", err);
-  } else {
-    console.log("Connected to MySQL");
-  }
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
-// إنشاء API لاسترجاع بيانات المستخدمين
+// API لاسترجاع المستخدمين
 app.get("/users", (req, res) => {
   db.query("SELECT * FROM users", (err, result) => {
     if (err) {
@@ -39,7 +31,18 @@ app.get("/users", (req, res) => {
   });
 });
 
+// API لفحص الاتصال بقاعدة البيانات
+app.get("/test-db", (req, res) => {
+  db.query("SELECT 1", (err) => {
+    if (err) {
+      res.status(500).json({ error: "Database connection failed" });
+    } else {
+      res.json({ message: "Database connected successfully!" });
+    }
+  });
+});
+
 // تشغيل السيرفر
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`🚀 Server running on port ${port}`);
 });
