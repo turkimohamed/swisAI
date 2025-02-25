@@ -1,3 +1,5 @@
+// server.js
+require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
@@ -8,32 +10,30 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// إنشاء اتصال MySQL باستخدام createPool
+// إعداد اتصال MySQL
 const db = mysql.createPool({
-  host: "haumea-shared.dzsecurity.net",
-  user: "swisli54_am",
-  password: "ovUsGt&R(E3W",
-  database: "swisli54_an",
-  port: 3360,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
 
-// API لاسترجاع المستخدمين
-app.get("/users", (req, res) => {
-  db.query("SELECT * FROM users", (err, result) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-    } else {
-      res.json(result);
-    }
-  });
+db.getConnection((err, connection) => {
+  if (err) {
+    console.error("❌ Database connection failed:", err);
+  } else {
+    console.log("✅ Connected to MySQL");
+    connection.release();
+  }
 });
 
-// API لفحص الاتصال بقاعدة البيانات
+// API لاختبار الاتصال
 app.get("/test-db", (req, res) => {
-  db.query("SELECT 1", (err) => {
+  db.query("SELECT 1", (err, result) => {
     if (err) {
       res.status(500).json({ error: "Database connection failed" });
     } else {
