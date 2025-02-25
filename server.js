@@ -9,13 +9,16 @@ app.use(cors());
 app.use(express.json());
 
 // إعداد اتصال MySQL
-const db = mysql.createConnection({
+const db = mysql.createPool({
   host: "haumea-shared.dzsecurity.net",
   user: "swisli54_am",
   password: "ovUsGt&R(E3W",
   database: "swisli54_an",
-  port: 3360, // تأكد من استخدام المنفذ الصحيح
+  port: 3360,
+  connectTimeout: 10000, // 10 ثوانٍ
 });
+// تأكد من استخدام المنفذ الصحيح
+
 
 db.connect((err) => {
   if (err) {
